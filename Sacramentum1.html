@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quest Journey</title>
+    <style>
+        body { 
+            background: linear-gradient(to bottom, #191970, #000000); 
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path d="M0 0 L100 0 L50 100 Z" fill="none" stroke="%23DAA520" stroke-width="1"/><path d="M0 100 L100 100 L50 0 Z" fill="none" stroke="%23DAA520" stroke-width="1"/></svg>') ; /* Intricate pattern */
+            font-family: 'Georgia', serif; 
+            color: #DAA520; 
+            padding: 20px; 
+            text-align: center; 
+            overflow-x: hidden; 
+            animation: tarotAura 5s infinite ease-in-out; 
+            box-shadow: inset 0 0 50px #FFD700, inset 0 0 100px #FF4500; 
+        }
+        @keyframes tarotAura { 
+            0% { background-position: 0% 50%; box-shadow: inset 0 0 20px #DAA520; }
+            50% { background-position: 100% 50%; box-shadow: inset 0 0 40px #FF4500; }
+            100% { background-position: 0% 50%; box-shadow: inset 0 0 20px #DAA520; }
+        }
+        h1 { 
+            color: #DAA520; 
+            text-shadow: 0 0 20px #FFD700, 0 0 40px #FF4500, 0 0 60px #8B4513; 
+            font-size: 2.5em; 
+            position: relative; 
+            padding: 10px; 
+            border-bottom: 2px dashed #DAA520; 
+            animation: goldPulse 2s infinite alternate; 
+            letter-spacing: 2px; 
+            font-style: italic; 
+        }
+        @keyframes goldPulse { 
+            from { text-shadow: 0 0 10px #FFD700; } 
+            to { text-shadow: 0 0 30px #FFD700; } 
+        }
+        #swipe-section { 
+            max-width: 350px; 
+            margin: 20px auto; 
+            overflow: hidden; 
+            position: relative; 
+            border: 5px solid #DAA520; 
+            border-image: linear-gradient(#DAA520, #FF4500) 1; 
+            border-radius: 15px; 
+            padding: 15px; 
+            box-shadow: inset 0 0 30px #FFD700, 0 0 40px #FF4500, 0 0 60px #8B4513; 
+            background: rgba(25, 25, 112, 0.8); /* Deep blue with opacity for depth */
+        }
+        #image-container { 
+            position: relative; 
+            width: 300px; 
+            height: 300px; 
+            margin: 10px auto; 
+            border: 3px solid #FFD700; 
+            border-image: linear-gradient(#FFD700, #DAA520) 1; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            background: radial-gradient(circle, #191970 0%, #000000 100%); 
+            animation: imagePulse 3s infinite alternate; 
+        }
+        @keyframes imagePulse { 
+            from { box-shadow: 0 0 10px #FFD700; } 
+            to { box-shadow: 0 0 30px #FFD700; } 
+        }
+        #image { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 8px; 
+            transition: transform 0.3s ease; 
+            filter: drop-shadow(0 0 10px #DAA520); 
+        }
+        .golden-dust { 
+            position: absolute; 
+            width: 8px; 
+            height: 8px; 
+            background: radial-gradient(#FFD700, #FF4500); 
+            border-radius: 50%; 
+            opacity: 0.9; 
+            pointer-events: none; 
+            animation: dustFade 1.5s forwards; 
+            box-shadow: 0 0 10px #FFD700, 0 0 20px #FF4500; 
+        }
+        @keyframes dustFade { 
+            to { opacity: 0; transform: translate(80px, -80px) scale(3); filter: blur(2px); } 
+        }
+        #results { 
+            max-width: 350px; 
+            margin: 20px auto; 
+            background: rgba(139, 69, 19, 0.3); /* Intricate tint */
+            padding: 20px; 
+            border: 2px solid #DAA520; 
+            border-image: linear-gradient(#DAA520, #FF4500) 1; 
+            border-radius: 10px; 
+            box-shadow: 0 0 30px #FFD700, 0 0 50px #FF4500; 
+            animation: fadeIn 1s ease; 
+            display: none; 
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #wattpad-link { color: #DAA520; text-decoration: underline; font-weight: bold; font-style: italic; text-shadow: 0 0 5px #FFD700; }
+    </style>
+</head>
+<body>
+    <h1>Quest Journey</h1>
+    <div id="swipe-section">
+        <div id="image-container">
+            <img id="image" src="https://picsum.photos/id/1/300/300">
+        </div>
+    </div>
+    <div id="results">
+        <h2>Your Destiny</h2>
+        <p id="stats"></p>
+        <p id="spin-off"></p>
+        <a id="wattpad-link" href="">Go to Quest Story</a>
+    </div>
+    <script>
+        const swipeSection = document.getElementById('swipe-section');
+        const results = document.getElementById('results');
+        const imageContainer = document.getElementById('image-container');
+        const image = document.getElementById('image');
+        const statsP = document.getElementById('stats');
+        const spinOffP = document.getElementById('spin-off');
+        const wattpadLink = document.getElementById('wattpad-link');
+
+        const animals = [
+            'https://picsum.photos/id/1/300/300', 'https://picsum.photos/id/2/300/300', 'https://picsum.photos/id/3/300/300',
+            'https://picsum.photos/id/4/300/300', 'https://picsum.photos/id/5/300/300', 'https://picsum.photos/id/6/300/300',
+            'https://picsum.photos/id/7/300/300', 'https://picsum.photos/id/8/300/300', 'https://picsum.photos/id/9/300/300',
+            'https://picsum.photos/id/10/300/300', 'https://picsum.photos/id/11/300/300', 'https://picsum.photos/id/12/300/300',
+            'https://picsum.photos/id/13/300/300', 'https://picsum.photos/id/14/300/300', 'https://picsum.photos/id/15/300/300',
+            'https://picsum.photos/id/16/300/300', 'https://picsum.photos/id/17/300/300', 'https://picsum.photos/id/18/300/300',
+            'https://picsum.photos/id/19/300/300', 'https://picsum.photos/id/20/300/300', 'https://picsum.photos/id/21/300/300',
+            'https://picsum.photos/id/22/300/300', 'https://picsum.photos/id/23/300/300', 'https://picsum.photos/id/24/300/300',
+            'https://picsum.photos/id/25/300/300', 'https://picsum.photos/id/26/300/300', 'https://picsum.photos/id/27/300/300',
+            'https://picsum.photos/id/28/300/300', 'https://picsum.photos/id/29/300/300', 'https://picsum.photos/id/30/300/300'
+        ];
+        const fairyTales = [
+            'https://picsum.photos/id/31/300/300', 'https://picsum.photos/id/32/300/300', 'https://picsum.photos/id/33/300/300',
+            'https://picsum.photos/id/34/300/300', 'https://picsum.photos/id/35/300/300', 'https://picsum.photos/id/36/300/300',
+            'https://picsum.photos/id/37/300/300', 'https://picsum.photos/id/38/300/300', 'https://picsum.photos/id/39/300/300',
+            'https://picsum.photos/id/40/300/300', 'https://picsum.photos/id/41/300/300', 'https://picsum.photos/id/42/300/300',
+            'https://picsum.photos/id/43/300/300', 'https://picsum.photos/id/44/300/300', 'https://picsum.photos/id/45/300/300',
+            'https://picsum.photos/id/46/300/300', 'https://picsum.photos/id/47/300/300', 'https://picsum.photos/id/48/300/300',
+            'https://picsum.photos/id/49/300/300', 'https://picsum.photos/id/50/300/300', 'https://picsum.photos/id/51/300/300',
+            'https://picsum.photos/id/52/300/300', 'https://picsum.photos/id/53/300/300', 'https://picsum.photos/id/54/300/300',
+            'https://picsum.photos/id/55/300/300', 'https://picsum.photos/id/56/300/300', 'https://picsum.photos/id/57/300/300',
+            'https://picsum.photos/id/58/300/300', 'https://picsum.photos/id/59/300/300', 'https://picsum.photos/id/60/300/300'
+        ];
+        const allImages = animals.concat(fairyTales); // 60 total
+        let sessionImages = allImages.sort(() => 0.5 - Math.random()).slice(0, 13); // Random 13 per session
+        let currentIndex = 0;
+        let swipes = [];
+        let dustTrail = [];
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        imageContainer.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            dustTrail = []; // Reset trail
+        });
+        imageContainer.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            let touchEndY = e.changedTouches[0].screenY;
+            if (touchEndX + 50 < touchStartX) swipeLeft(touchEndX, touchEndY); // Swipe left for No
+            if (touchEndX - 50 > touchStartX) swipeRight(touchEndX, touchEndY); // Swipe right for Yes
+        });
+
+        function createDust(x, y) {
+            const dust = document.createElement('div');
+            dust.className = 'golden-dust';
+            dust.style.left = `${x - imageContainer.offsetLeft - 6}px`;
+            dust.style.top = `${y - imageContainer.offsetTop - 6}px`;
+            imageContainer.appendChild(dust);
+            dustTrail.push(dust);
+            setTimeout(() => {
+                dust.remove();
+                dustTrail.shift();
+            }, 1200);
+        }
+
+        function swipeLeft(x, y) {
+            if (swipes.length < 10) {
+                swipes.push('no');
+                currentIndex = (currentIndex % 2 === 0) ? 1 : 3;
+                createDust(x, y); // Golden fairy dust trace
+                updateImage();
+            }
+        }
+
+        function swipeRight(x, y) {
+            if (swipes.length < 10) {
+                swipes.push('yes');
+                currentIndex = (currentIndex % 2 === 0) ? 2 : 4;
+                createDust(x, y); // Golden fairy dust trace
+                updateImage();
+            }
+        }
+
+        function updateImage() {
+            if (currentIndex < sessionImages.length && swipes.length < 10) image.src = sessionImages[currentIndex];
+            else if (swipes.length === 10) showResults();
+        }
+
+        async function showResults() {
+            swipeSection.style.display = 'none';
+            results.style.display = 'block';
+            let yesCount = swipes.filter(s => s === 'yes').length;
+            const apiKey = 'xai-a5hcks6857vhu4rMek4ctvXM3aOdGHwbmNmCVoOgTWO3dEuhH4OSeLC48ayAqFu9zi8F3m3Vb8nYdokF';
+            // API call for live stats after 10 swipes
+            const url = 'https://api.x.ai/v1/completions'; // Adjusted endpoint
+            const statPrompt = `Generate a light, breezy stat summary for a game with ${yesCount} yes swipes out of 10.`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'grok',
+                        prompt: statPrompt,
+                        max_tokens: 50,
+                        temperature: 0.7
+                    })
+                });
+                const data = await response.json();
+                statsP.textContent = `Swipe History: ${swipes.join(', ')}. ${data.choices[0].text.trim()}`;
+            } catch (error) {
+                statsP.textContent = `Swipe History: ${swipes.join(', ')}. Stats unavailable—try again later.`;
+                console.error('API Error:', error);
+            }
+            // API call for spin-off paragraph
+            const spinOffPrompt = `Generate a high-quality, medieval-inspired opening paragraph for a story about a hero in a realm of ancient oaths, with ${yesCount} yes swipes indicating strength, for a private club admission if over 8.`;
+            try {
+                const spinOffResponse = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'grok',
+                        prompt: spinOffPrompt,
+                        max_tokens: 100,
+                        temperature: 0.7
+                    })
+                });
+                const spinOffData = await spinOffResponse.json();
+                spinOffP.textContent = spinOffData.choices[0].text.trim();
+                wattpadLink.href = "https://www.wattpad.com/story/401765240";
+                wattpadLink.textContent = yesCount > 8 ? "Admission to Private Club: Go to Quest Story" : "Go to Quest Story";
+            } catch (error) {
+                spinOffP.textContent = "Story Opening: A hero rises in a realm of ancient oaths, facing trials with courage.";
+                wattpadLink.href = "https://www.wattpad.com/story/401765240";
+                wattpadLink.textContent = "Go to Quest Story";
+                console.error('API Error:', error);
+            }
+        }
+
+        // Start with first image
+        image.src = sessionImages[currentIndex];
+    </script>
+</body>
+</html>
