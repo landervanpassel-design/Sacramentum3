@@ -208,7 +208,7 @@
             swipeSection.style.display = 'none';
             results.style.display = 'block';
             let yesCount = swipes.filter(s => s === 'yes').length;
-            const apiKey = 'xai-a5hcks6857vhu4rMek4ctvXM3aOdGHwbmNmCVoOgTWO3dEuhH4OSeLC48ayAqFu9zi8F3m3Vb8nYdokF';
+            const apiKey = 'xai-';
             // API call for live stats after 10 swipes
             const url = 'https://api.x.ai/v1/completions'; // Adjusted endpoint
             const statPrompt = `Generate a light, breezy stat summary for a game with ${yesCount} yes swipes out of 10.`;
@@ -264,4 +264,5 @@
         image.src = sessionImages[currentIndex];
     </script>
 </body>
+
 </html>
